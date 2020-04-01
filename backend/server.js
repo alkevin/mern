@@ -13,6 +13,7 @@ import indexRouter from './routes/index';
 import mongoose from 'mongoose';
 import playerRouter from './routes/player';
 import userRouter from './routes/userRoutes';
+import fishRouter from './routes/fishRoutes';
 
 const app = express(),
   bodyParser = require('body-parser'),
@@ -86,6 +87,7 @@ app.use(
 app.use('/', indexRouter);
 app.use('/players', playerRouter);
 app.use('/users', userRouter);
+app.use('/fishs', fishRouter);
 
 const port = process.env.PORT || 3000;
 
