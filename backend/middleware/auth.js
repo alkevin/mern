@@ -7,9 +7,11 @@ const JWT_KEY = process.env.TOKEN_SECRET;
 
 const auth = async(req, res, next) => {
   const token = req.header('Authorization').replace('Bearer ', '');
+  console.log(token);
   const data = jwt.verify(token, JWT_KEY);
+  console.log(data);
   try {
-    const user = await User.findOne({ _id: data._id, 'tokens.token': token });
+    const user = await User.findOne({ _id: data.iss, 'tokens.token': token });
     if (!user) {
       throw new Error();
     }

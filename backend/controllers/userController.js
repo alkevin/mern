@@ -30,6 +30,17 @@ export const list_all_users = function (req, res){
     });
 };
 
+/*export const create_user = async (req, res) => {
+  console.log(req.body);
+  let user = new User(req.body);
+  try {
+    var createdUser = await user.save();
+    res.json(createdUser);
+  } catch (error) {
+    res.send('an error occured');
+  }
+};*/
+
 export const create_user = async(req, res) => {
   var new_user = new User(req.body);
   User.findOne({mail:new_user.mail})
