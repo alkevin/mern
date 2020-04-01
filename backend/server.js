@@ -11,8 +11,15 @@ import responseTime from 'response-time';
 import favicon from 'serve-favicon';
 import indexRouter from './routes/index';
 import mongoose from 'mongoose';
+import playerRouter from './routes/player';
+import userRouter from './routes/userRoutes';
 
-const app = express();
+const app = express(),
+  bodyParser = require('body-parser'),
+  hostname = '0.0.0.0';
+
+app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.json());
 
 // load .env
 require('dotenv').config();
@@ -48,17 +55,20 @@ app.use(morgan('dev'));
 app.use(responseTime());
 
 console.log(
-  `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.PORT}/${process.env.DB_DATABASE}`
+  `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`
 );
 
 mongoose.Promise = global.Promise;
 mongoose.connect(
-  `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.PORT}/${process.env.DB_DATABASE}`,
+  `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`,
   {
     useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true
   })
   .then(() => {
     console.log(emoji.get('white_check_mark'), ' MongoDB connection success !');
+  })
+  .catch(error => {
+    console.log('MongoDB connection failed...' + error);
   });
 
 // limit repeated requests to endpoints such as password reset
@@ -72,20 +82,18 @@ app.use(
 
 //models
 
-
 // routes
 app.use('/', indexRouter);
+app.use('/players', playerRouter);
+app.use('/users', userRouter);
 
-
-// setup ip address and port number
-app.set('port', process.env.PORT || 3000);
-app.set('ipaddr', '0.0.0.0');
+const port = process.env.PORT || 3000;
 
 // start express server
-app.listen(app.get('port'), app.get('ipaddr'), function () {
+app.listen(port, hostname, function () {
   console.log(
     emoji.get('heart'),
-    'The server is running @ ' + 'http://localhost/' + app.get('port'),
+    'The server is running @ ' + 'http://localhost/' + port,
     emoji.get('heart')
   );
 });
